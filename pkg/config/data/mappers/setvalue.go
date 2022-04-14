@@ -1,4 +1,4 @@
-MIT License
+package mappers
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -19,3 +19,30 @@ MIT License
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+import (
+	types "github.com/bhojpur/os/pkg/config/data"
+)
+
+type SetValue struct {
+	Field         string
+	InternalValue interface{}
+	ExternalValue interface{}
+}
+
+func (d SetValue) FromInternal(data map[string]interface{}) {
+	if d.ExternalValue != nil {
+		data[d.Field] = d.ExternalValue
+	}
+}
+
+func (d SetValue) ToInternal(data map[string]interface{}) error {
+	if d.InternalValue != nil {
+		data[d.Field] = d.InternalValue
+	}
+	return nil
+}
+
+func (d SetValue) ModifySchema(schema *types.Schema, schemas *types.Schemas) error {
+	return ValidateField(d.Field, schema)
+}

@@ -1,4 +1,4 @@
-MIT License
+package mappers
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -19,3 +19,50 @@ MIT License
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+import (
+	types "github.com/bhojpur/os/pkg/config/data"
+	"github.com/bhojpur/os/pkg/config/data/convert"
+)
+
+type SliceMerge struct {
+	From             []string
+	To               string
+	IgnoreDefinition bool
+}
+
+func (s SliceMerge) FromInternal(data map[string]interface{}) {
+	var result []interface{}
+	for _, name := range s.From {
+		val, ok := data[name]
+		if !ok {
+			continue
+		}
+		result = append(result, convert.ToInterfaceSlice(val)...)
+	}
+
+	if result != nil {
+		data[s.To] = result
+	}
+}
+
+func (s SliceMerge) ToInternal(data map[string]interface{}) error {
+	return nil
+}
+
+func (s SliceMerge) ModifySchema(schema *types.Schema, schemas *types.Schemas) error {
+	if s.IgnoreDefinition {
+		return nil
+	}
+
+	for _, from := range s.From {
+		if err := ValidateField(from, schema); err != nil {
+			return err
+		}
+		if from != s.To {
+			delete(schema.ResourceFields, from)
+		}
+	}
+
+	return ValidateField(s.To, schema)
+}

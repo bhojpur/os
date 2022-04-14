@@ -1,0 +1,10 @@
+NAME="BhojpurOS"
+VERSION="Bhojpur OS %VERSION%"
+ID=bos
+ID_LIKE=alpine
+PRETTY_NAME="Bhojpur OS %VERSION%"
+VERSION_ID="%VERSION%"
+HOME_URL="https://www.bhojpur-consulting.com/"
+SUPPORT_URL="https://desk.bhojpur-consulting.com/"
+BUG_REPORT_URL="https://github.com/bhojpur/os/issues"
+ISO_URL="https://github.com/bhojpur/os/releases/download/%VERSION%/bos-%ARCH%.iso"

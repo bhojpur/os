@@ -1,4 +1,4 @@
-MIT License
+package schemaconvert
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -19,3 +19,31 @@ MIT License
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+import (
+	types "github.com/bhojpur/os/pkg/config/data"
+	"github.com/bhojpur/os/pkg/config/data/convert"
+)
+
+func InternalToInternal(from interface{}, fromSchema *types.Schema, toSchema *types.Schema, target interface{}) error {
+	data, err := convert.EncodeToMap(from)
+	if err != nil {
+		return err
+	}
+	fromSchema.Mapper.FromInternal(data)
+	if err := toSchema.Mapper.ToInternal(data); err != nil {
+		return err
+	}
+	return convert.ToObj(data, target)
+}
+
+func ToInternal(from interface{}, schema *types.Schema, target interface{}) error {
+	data, err := convert.EncodeToMap(from)
+	if err != nil {
+		return err
+	}
+	if err := schema.Mapper.ToInternal(data); err != nil {
+		return err
+	}
+	return convert.ToObj(data, target)
+}

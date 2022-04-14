@@ -1,0 +1,17 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.define "bos"
+  config.vm.box = "bos"
+  config.vm.guest = :linux
+
+  config.ssh.username = 'bhojpur'
+  config.ssh.password = 'bhojpur'
+
+  # Disable conflicting plugins
+  config.vbguest.auto_update = false if Vagrant.has_plugin?("vagrant-vbguest") 
+
+  # Disable default file syncing
+  config.vm.synced_folder '.', '/vagrant', disabled: true
+end

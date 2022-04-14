@@ -1,4 +1,4 @@
-MIT License
+package sysctl
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -19,3 +19,23 @@ MIT License
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+import (
+	"io/ioutil"
+	"path"
+	"strings"
+
+	"github.com/bhojpur/os/pkg/config"
+)
+
+func ConfigureSysctl(cfg *config.CloudConfig) error {
+	for k, v := range cfg.BhojpurOS.Sysctls {
+		elements := []string{"/proc", "sys"}
+		elements = append(elements, strings.Split(k, ".")...)
+		path := path.Join(elements...)
+		if err := ioutil.WriteFile(path, []byte(v), 0644); err != nil {
+			return err
+		}
+	}
+	return nil
+}

@@ -1,4 +1,4 @@
-MIT License
+package mappers
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -19,3 +19,31 @@ MIT License
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+import (
+	types "github.com/bhojpur/os/pkg/config/data"
+)
+
+type Object struct {
+	types.Mappers
+}
+
+func NewObject(mappers ...types.Mapper) Object {
+	return Object{
+		Mappers: append([]types.Mapper{
+			&Embed{Field: "metadata"},
+			&Embed{Field: "spec", Optional: true},
+			&ReadOnly{Field: "status", Optional: true, SubFields: true},
+			Drop{Field: "kind"},
+			Drop{Field: "apiVersion"},
+			Move{From: "selfLink", To: ".selfLink", DestDefined: true},
+			&Namespaced{
+				IfNot: true,
+				Mappers: []types.Mapper{
+					&Drop{Field: "namespace"},
+				},
+			},
+			Drop{Field: "finalizers", IgnoreDefinition: true},
+		}, mappers...),
+	}
+}

@@ -1,4 +1,4 @@
-MIT License
+package convert
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -19,3 +19,13 @@ MIT License
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+import "fmt"
+
+func ToReference(typeName string) string {
+	return fmt.Sprintf("reference[%s]", typeName)
+}
+
+func ToFullReference(path, typeName string) string {
+	return fmt.Sprintf("reference[%s/schemas/%s]", path, typeName)
+}

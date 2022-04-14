@@ -1,4 +1,4 @@
-MIT License
+package mappers
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -19,3 +19,31 @@ MIT License
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+import (
+	types "github.com/bhojpur/os/pkg/config/data"
+)
+
+var displayNameMappers = types.Mappers{
+	&Move{From: "name", To: "id"},
+	&Move{From: "displayName", To: "name"},
+	Access{Fields: map[string]string{
+		"id":   "",
+		"name": "cru",
+	}},
+}
+
+type DisplayName struct {
+}
+
+func (d DisplayName) FromInternal(data map[string]interface{}) {
+	displayNameMappers.FromInternal(data)
+}
+
+func (d DisplayName) ToInternal(data map[string]interface{}) error {
+	return displayNameMappers.ToInternal(data)
+}
+
+func (d DisplayName) ModifySchema(schema *types.Schema, schemas *types.Schemas) error {
+	return displayNameMappers.ModifySchema(schema, schemas)
+}

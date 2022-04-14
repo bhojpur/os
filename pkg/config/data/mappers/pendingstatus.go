@@ -1,4 +1,4 @@
-MIT License
+package mappers
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -19,3 +19,37 @@ MIT License
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+import (
+	types "github.com/bhojpur/os/pkg/config/data"
+	"github.com/bhojpur/os/pkg/config/data/convert"
+	"github.com/bhojpur/os/pkg/config/data/values"
+)
+
+type PendingStatus struct {
+}
+
+func (s PendingStatus) FromInternal(data map[string]interface{}) {
+	if data == nil {
+		return
+	}
+
+	if data["state"] != "active" {
+		return
+	}
+
+	conditions := convert.ToMapSlice(values.GetValueN(data, "status", "conditions"))
+	if len(conditions) > 0 {
+		return
+	}
+
+	data["state"] = "pending"
+}
+
+func (s PendingStatus) ToInternal(data map[string]interface{}) error {
+	return nil
+}
+
+func (s PendingStatus) ModifySchema(schema *types.Schema, schemas *types.Schemas) error {
+	return nil
+}

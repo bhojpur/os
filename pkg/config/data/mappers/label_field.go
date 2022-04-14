@@ -1,4 +1,4 @@
-MIT License
+package mappers
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -19,3 +19,31 @@ MIT License
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+import (
+	types "github.com/bhojpur/os/pkg/config/data"
+	"github.com/bhojpur/os/pkg/config/data/values"
+)
+
+type LabelField struct {
+	Field string
+}
+
+func (e LabelField) FromInternal(data map[string]interface{}) {
+	v, ok := values.RemoveValue(data, "labels", "field.bhojpur.net/"+e.Field)
+	if ok {
+		data[e.Field] = v
+	}
+}
+
+func (e LabelField) ToInternal(data map[string]interface{}) error {
+	v, ok := data[e.Field]
+	if ok {
+		values.PutValue(data, v, "labels", "field.bhojpur.net/"+e.Field)
+	}
+	return nil
+}
+
+func (e LabelField) ModifySchema(schema *types.Schema, schemas *types.Schemas) error {
+	return ValidateField(e.Field, schema)
+}

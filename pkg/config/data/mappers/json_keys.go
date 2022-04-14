@@ -1,4 +1,4 @@
-MIT License
+package mappers
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -19,3 +19,29 @@ MIT License
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+import (
+	types "github.com/bhojpur/os/pkg/config/data"
+	"github.com/bhojpur/os/pkg/config/data/convert"
+)
+
+type JSONKeys struct {
+}
+
+func (d JSONKeys) FromInternal(data map[string]interface{}) {
+}
+
+func (d JSONKeys) ToInternal(data map[string]interface{}) error {
+	for key, value := range data {
+		newKey := convert.ToJSONKey(key)
+		if newKey != key {
+			data[newKey] = value
+			delete(data, key)
+		}
+	}
+	return nil
+}
+
+func (d JSONKeys) ModifySchema(schema *types.Schema, schemas *types.Schemas) error {
+	return nil
+}

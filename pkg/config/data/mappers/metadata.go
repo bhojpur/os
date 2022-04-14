@@ -1,4 +1,4 @@
-MIT License
+package mappers
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -19,3 +19,31 @@ MIT License
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+import (
+	types "github.com/bhojpur/os/pkg/config/data"
+)
+
+func NewMetadataMapper() types.Mapper {
+	return types.Mappers{
+		ChangeType{Field: "name", Type: "dnsLabel"},
+		Drop{Field: "generateName"},
+		Move{From: "uid", To: "uuid", CodeName: "UUID"},
+		Drop{Field: "resourceVersion"},
+		Drop{Field: "generation"},
+		Move{From: "creationTimestamp", To: "created"},
+		Move{From: "deletionTimestamp", To: "removed"},
+		Drop{Field: "deletionGracePeriodSeconds"},
+		Drop{Field: "initializers"},
+		Drop{Field: "clusterName"},
+		ReadOnly{Field: "*"},
+		Access{
+			Fields: map[string]string{
+				"name":        "c",
+				"namespace":   "c",
+				"labels":      "cu",
+				"annotations": "cu",
+			},
+		},
+	}
+}

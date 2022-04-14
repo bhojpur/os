@@ -1,0 +1,20 @@
+#!/bin/bash
+
+. /etc/os-release
+cat > /etc/issue << "COW"
+Bhojpur OS
+COW
+
+cat >> /etc/issue << EOF
+$PRETTY_NAME
+Kernel \r on an \m (\l)
+
+================================================================================
+NIC              State          Address
+$(ip -br addr show | grep -E -v '^(lo|flannel|cni|veth)')
+================================================================================
+EOF
+cat >> /etc/issue << "EOF"
+
+Welcome to Bhojpur OS (login with user: bhojpur)
+EOF

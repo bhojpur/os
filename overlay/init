@@ -1,0 +1,42 @@
+#!/bin/bash
+set -e
+
+rescue() {
+    echo ERROR "Something went wrong, run with cmdline bos.debug for more logging"
+    echo Dropping to shell
+    exec bash
+}
+
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
+
+. /usr/libexec/os/functions
+. /usr/lib/os-release
+
+pinfo Welcome to $PRETTY_NAME
+
+if [ "$BOS_DEBUG" = "true" ]; then
+    set -x
+fi
+
+if ! ${SCRIPTS}/bootstrap; then
+    rescue
+fi
+
+exec >/dev/console </dev/console 2>&1
+
+reinit_debug
+
+if ! ${SCRIPTS}/mode; then
+    rescue
+fi
+
+trap rescue EXIT
+
+export BOS_MODE=$(</run/bos/mode)
+pinfo Running mode: ${BOS_MODE}
+source $SCRIPTS/mode-${BOS_MODE}
+
+pinfo Booting system
+source $SCRIPTS/boot
+
+exec /sbin/init

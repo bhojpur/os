@@ -1,4 +1,4 @@
-MIT License
+package mappers
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -19,3 +19,30 @@ MIT License
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+import (
+	types "github.com/bhojpur/os/pkg/config/data"
+)
+
+type Condition struct {
+	Field  string
+	Value  interface{}
+	Mapper types.Mapper
+}
+
+func (m Condition) FromInternal(data map[string]interface{}) {
+	if data[m.Field] == m.Value {
+		m.Mapper.FromInternal(data)
+	}
+}
+
+func (m Condition) ToInternal(data map[string]interface{}) error {
+	if data[m.Field] == m.Value {
+		return m.Mapper.ToInternal(data)
+	}
+	return nil
+}
+
+func (m Condition) ModifySchema(s *types.Schema, schemas *types.Schemas) error {
+	return m.Mapper.ModifySchema(s, schemas)
+}

@@ -1,4 +1,4 @@
-MIT License
+package data
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -19,3 +19,34 @@ MIT License
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+import (
+	"encoding/json"
+	"io"
+	"regexp"
+
+	"github.com/ghodss/yaml"
+)
+
+var (
+	commenter = regexp.MustCompile("(?m)^( *)zzz#\\((.*)\\)\\((.*)\\)([a-z]+.*):(.*)")
+)
+
+func JSONEncoder(writer io.Writer, v interface{}) error {
+	return json.NewEncoder(writer).Encode(v)
+}
+
+func YAMLEncoder(writer io.Writer, v interface{}) error {
+	data, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+	buf, err := yaml.JSONToYAML(data)
+	if err != nil {
+		return err
+	}
+	//buf = commenter.ReplaceAll(buf, []byte("${1}# ${2}type: ${3}\n${1}# ${4}:${5}"))
+	buf = commenter.ReplaceAll(buf, []byte("${1}# ${4}:${5}"))
+	_, err = writer.Write(buf)
+	return err
+}

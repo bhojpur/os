@@ -1,4 +1,4 @@
-MIT License
+package install
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -19,3 +19,34 @@ MIT License
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+import (
+	"fmt"
+	"os"
+
+	installer "github.com/bhojpur/os/pkg/install"
+	"github.com/bhojpur/os/pkg/mode"
+	"github.com/sirupsen/logrus"
+	"github.com/urfave/cli"
+)
+
+func Command() cli.Command {
+	mode, _ := mode.Get()
+	return cli.Command{
+		Name:  "install",
+		Usage: "install Bhojpur OS",
+		Flags: []cli.Flag{},
+		Before: func(c *cli.Context) error {
+			if os.Getuid() != 0 {
+				return fmt.Errorf("must be run as root")
+			}
+			return nil
+		},
+		Action: func(*cli.Context) {
+			if err := installer.Run(); err != nil {
+				logrus.Error(err)
+			}
+		},
+		Hidden: mode == "local",
+	}
+}

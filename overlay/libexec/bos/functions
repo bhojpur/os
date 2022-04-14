@@ -1,0 +1,81 @@
+#!/bin/bash
+set -e
+
+export SCRIPTS=/usr/libexec/os
+export BOS_SYSTEM=/.base/bhojpur/system
+
+reinit_debug()
+{
+    if [ "$BOS_DEBUG" = "true" ]; then
+        set -x
+        return 0
+    fi
+
+    if [ -e /run/bos/debug ]; then
+        set -x
+        return 0
+    fi
+
+    if [ -e /proc/cmdline ]; then
+        for x in $(cat /proc/cmdline); do
+            case $x in
+                bos.debug*)
+                    export BOS_DEBUG=true
+                    mkdir -p /run/bos
+                    echo debug > /run/bos/debug || true
+                    ;;
+            esac
+        done
+    fi
+
+    if [ "$BOS_DEBUG" = "true" ]; then
+        set -x
+    fi
+}
+
+setup_kernel()
+{
+    KERNEL=${BOS_SYSTEM}/kernel/$(uname -r)/kernel.squashfs
+    if [ ! -e ${KERNEL} ]; then
+        return 0
+    fi
+
+    mkdir -p /run/bos/kernel
+    mount -t squashfs $KERNEL /run/bos/kernel
+
+    mount --bind /run/bos/kernel/lib/modules /lib/modules
+    mount --bind /run/bos/kernel/lib/firmware /lib/firmware
+    mount --bind /run/bos/kernel/headers /usr/src
+
+    umount /run/bos/kernel
+}
+
+perr()
+{
+    echo "[ERROR]" "$@" 1>&2
+}
+
+pfatal()
+{
+    echo "[FATAL]" "$@" 1>&2
+    exit 1
+}
+
+pinfo()
+{
+    echo " * " "$@"
+}
+
+cleanup()
+{
+    rm -rf /run/bos
+    unset SCRIPTS
+    unset BOS_SYSTEM
+    if [ -n "$BOS_MODE" ]; then
+        mkdir -p /run/bos
+        echo "$BOS_MODE" > /run/bos/mode
+    fi
+    unset BOS_MODE
+}
+
+reinit_debug

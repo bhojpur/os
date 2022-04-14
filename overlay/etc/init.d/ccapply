@@ -1,0 +1,9 @@
+#!/sbin/openrc-run
+
+depend() {
+    want network-online
+}
+
+name="ccapply"
+command="/bhojpur/system/os/current/opsutl"
+command_args="config"

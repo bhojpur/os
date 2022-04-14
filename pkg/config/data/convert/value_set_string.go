@@ -1,4 +1,4 @@
-MIT License
+package convert
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -19,3 +19,20 @@ MIT License
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+import (
+	"regexp"
+	"strings"
+)
+
+var (
+	splitRegexp = regexp.MustCompile("[[:space:]]*,[[:space:]]*")
+)
+
+func ToValuesSlice(value string) []string {
+	value = strings.TrimSpace(value)
+	if strings.HasPrefix(value, "(") && strings.HasSuffix(value, ")") {
+		return splitRegexp.Split(value[1:len(value)-1], -1)
+	}
+	return []string{value}
+}

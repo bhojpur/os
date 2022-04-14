@@ -1,4 +1,4 @@
-MIT License
+package mappers
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -19,3 +19,40 @@ MIT License
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+import (
+	mapper "github.com/bhojpur/os/pkg/config/data"
+)
+
+type AliasField struct {
+	Field string
+	Names []string
+}
+
+func NewAlias(field string, names ...string) AliasField {
+	return AliasField{
+		Field: field,
+		Names: names,
+	}
+}
+
+func (d AliasField) FromInternal(data map[string]interface{}) {
+}
+
+func (d AliasField) ToInternal(data map[string]interface{}) error {
+	for _, name := range d.Names {
+		if v, ok := data[name]; ok {
+			delete(data, name)
+			data[d.Field] = v
+		}
+	}
+	return nil
+}
+
+func (d AliasField) ModifySchema(schema *mapper.Schema, schemas *mapper.Schemas) error {
+	for _, name := range d.Names {
+		schema.ResourceFields[name] = mapper.Field{}
+	}
+
+	return ValidateField(d.Field, schema)
+}

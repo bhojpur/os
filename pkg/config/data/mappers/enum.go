@@ -1,4 +1,4 @@
-MIT License
+package mappers
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -19,3 +19,31 @@ MIT License
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+import (
+	types "github.com/bhojpur/os/pkg/config/data"
+)
+
+type Enum struct {
+	Field   string
+	Options []string
+}
+
+func (e Enum) FromInternal(data map[string]interface{}) {
+}
+
+func (e Enum) ToInternal(data map[string]interface{}) error {
+	return nil
+}
+
+func (e Enum) ModifySchema(schema *types.Schema, schemas *types.Schemas) error {
+	if err := ValidateField(e.Field, schema); err != nil {
+		return err
+	}
+
+	f := schema.ResourceFields[e.Field]
+	f.Type = "enum"
+	f.Options = e.Options
+	schema.ResourceFields[e.Field] = f
+	return nil
+}

@@ -1,0 +1,7 @@
+Welcome to Bhojpur OS!
+
+Refer to https://github.com/bhojpur/os for README and issues.
+
+The default mode of Bhojpur OS is to run a single node cluster. Use "kubectl"
+to access it. The node token is in /var/lib/bhojpur/dcp/server/node-token
+could be used to join agents to this server.

@@ -1,4 +1,4 @@
-MIT License
+package mappers
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -19,3 +19,23 @@ MIT License
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+import mapper "github.com/bhojpur/os/pkg/config/data"
+
+type DefaultMapper struct {
+	Field string
+}
+
+func (d DefaultMapper) FromInternal(data map[string]interface{}) {
+}
+
+func (d DefaultMapper) ToInternal(data map[string]interface{}) error {
+	return nil
+}
+
+func (d DefaultMapper) ModifySchema(schema *mapper.Schema, schemas *mapper.Schemas) error {
+	if d.Field != "" {
+		return ValidateField(d.Field, schema)
+	}
+	return nil
+}

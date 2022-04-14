@@ -1,4 +1,4 @@
-MIT License
+package builder
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -19,3 +19,46 @@ MIT License
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+import (
+	"testing"
+
+	mapper "github.com/bhojpur/os/pkg/config/data"
+	"github.com/stretchr/testify/assert"
+)
+
+func TestEmptyStringWithDefault(t *testing.T) {
+	schema := &mapper.Schema{
+		ResourceFields: map[string]mapper.Field{
+			"foo": {
+				Default: "foo",
+				Type:    "string",
+				Create:  true,
+			},
+		},
+	}
+	schemas := mapper.NewSchemas()
+	schemas.AddSchema(*schema)
+
+	builder := NewBuilder(schemas)
+
+	// Test if no field we set to "foo"
+	result, err := builder.Construct(schema, nil, Create)
+	if err != nil {
+		t.Fatal(err)
+	}
+	value, ok := result["foo"]
+	assert.True(t, ok)
+	assert.Equal(t, "foo", value)
+
+	// Test if field is "" we set to "foo"
+	result, err = builder.Construct(schema, map[string]interface{}{
+		"foo": "",
+	}, Create)
+	if err != nil {
+		t.Fatal(err)
+	}
+	value, ok = result["foo"]
+	assert.True(t, ok)
+	assert.Equal(t, "foo", value)
+}

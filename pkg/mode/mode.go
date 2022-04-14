@@ -1,4 +1,4 @@
-MIT License
+package mode
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -19,3 +19,22 @@ MIT License
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+import (
+	"io/ioutil"
+	"os"
+	"path/filepath"
+	"strings"
+
+	"github.com/bhojpur/os/pkg/system"
+)
+
+func Get(prefix ...string) (string, error) {
+	bytes, err := ioutil.ReadFile(filepath.Join(filepath.Join(prefix...), system.StatePath("mode")))
+	if os.IsNotExist(err) {
+		return "", nil
+	} else if err != nil {
+		return "", err
+	}
+	return strings.TrimSpace(string(bytes)), nil
+}

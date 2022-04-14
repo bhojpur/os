@@ -1,4 +1,4 @@
-MIT License
+package mappers
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -19,3 +19,38 @@ MIT License
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+import (
+	"fmt"
+
+	types "github.com/bhojpur/os/pkg/config/data"
+)
+
+type MapToSlice struct {
+	Field string
+	Sep   string
+}
+
+func (d MapToSlice) FromInternal(data map[string]interface{}) {
+}
+
+func (d MapToSlice) ToInternal(data map[string]interface{}) error {
+	v, ok := data[d.Field]
+	if !ok {
+		return nil
+	}
+
+	if m, ok := v.(map[string]interface{}); ok {
+		var result []interface{}
+		for k, v := range m {
+			result = append(result, fmt.Sprintf("%s%s%v", k, d.Sep, v))
+		}
+		data[d.Field] = result
+	}
+
+	return nil
+}
+
+func (d MapToSlice) ModifySchema(schema *types.Schema, schemas *types.Schemas) error {
+	return ValidateField(d.Field, schema)
+}

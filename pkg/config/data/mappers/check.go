@@ -1,4 +1,4 @@
-MIT License
+package mappers
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -19,3 +19,27 @@ MIT License
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+import (
+	"fmt"
+
+	types "github.com/bhojpur/os/pkg/config/data"
+)
+
+func ValidateFields(schemas *types.Schema, fields ...string) error {
+	for _, f := range fields {
+		if err := ValidateField(f, schemas); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func ValidateField(field string, schema *types.Schema) error {
+	if _, ok := schema.ResourceFields[field]; !ok {
+		return fmt.Errorf("field %s missing on schema %s", field, schema.ID)
+	}
+
+	return nil
+}

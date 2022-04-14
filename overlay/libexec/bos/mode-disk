@@ -1,0 +1,167 @@
+#!/bin/bash
+
+TARGET=/run/bos/target
+
+source /usr/lib/os-release
+
+grow()
+{
+    parted $1 resizepart $2 100%
+    partprobe $1
+    sleep 2
+    e2fsck -f $3
+    resize2fs $3
+}
+
+setup_mounts()
+{
+    mkdir -p $TARGET
+    mount -L BOS_STATE $TARGET
+
+    if [ -e $TARGET/bhojpur/system/growpart ]; then
+        read DEV NUM < $TARGET/bhojpur/system/growpart
+        if [ ! -e "${DEV}${NUM}" ]; then
+            # /dev/sda2 => /dev/sda2
+            # /dev/nvme0n1p2 => /dev/nvme0n1p2
+            PART=$(blkid -L BOS_STATE)
+
+            # /dev/sda2 => /dev/sda
+            # /dev/nvme0n1p2 => /dev/nvme0n1
+            DEV=$(echo "$PART" | sed -r 's/((\d+)p)?\d+$/\2/')
+
+            # /dev/sda2 => 2
+            # /dev/nvme0n1p2 => 2
+            NUM=$(echo "$PART" | sed 's!.*[^0-9]!!')
+        fi
+        if [ -e "${PART:=${DEV}${NUM}}" ]; then
+            umount $TARGET
+            grow $DEV $NUM $PART || true
+            mount -L BOS_STATE $TARGET
+        fi
+        rm -f $TARGET/bhojpur/system/growpart
+    fi
+}
+
+setup_kernel_squashfs()
+{
+    KER_SRC="/.base/bhojpur/system/kernel/$(uname -r)/kernel.squashfs"
+    KER_DEST="$TARGET/bhojpur/system/kernel/$(uname -r)/kernel.squashfs"
+    if [ -e $KER_SRC ] && [ ! -e $KER_DEST ]; then
+        mkdir -p $(dirname ${KER_DEST})
+        cp -r $KER_SRC $KER_DEST
+    fi
+}
+
+setup_bos()
+{
+    if [ -e $TARGET/bhojpur/system/os/current/opsutl ]; then
+        return 0
+    fi
+
+    BOS_SRC=/.base/bhojpur/system/os/current/opsutl
+    BOS_FILE=$TARGET/bhojpur/system/os/${VERSION_ID}/opsutl
+
+    if [ ! -e ${BOS_SRC} ]; then
+        return 0
+    fi
+
+    if [ ! -e ${BOS_FILE} ]; then
+        mkdir -p $(dirname ${BOS_FILE}.tmp)
+        cp -f ${BOS_SRC} ${BOS_FILE}.tmp
+        mv -f ${BOS_FILE}.tmp ${BOS_FILE}
+    fi
+
+    ln -sf ${VERSION_ID} $TARGET/bhojpur/system/os/current
+}
+
+setup_init()
+{
+    if [ -e $TARGET/sbin/init ]; then
+        return 0
+    fi
+
+    mkdir -p $TARGET/sbin
+    ln -sf ../bhojpur/system/os/current/opsutl $TARGET/sbin/init
+}
+
+setup_dcp()
+{
+    if [ -e $TARGET/bhojpur/system/dcp/current/dcp ]; then
+        return 0
+    fi
+
+    for i in $(ls -drt $TARGET/bhojpur/system/dcp/*); do
+        if [ ! -L "$i" ]; then
+            LATEST=$i
+            break
+        fi
+    done
+
+    if [ -e "${LATEST}" ]; then
+        ln -sf $(basename "${LATEST}") $TARGET/bhojpur/system/dcp/current
+        return 0
+    fi
+}
+
+takeover()
+{
+    if [ ! -e bhojpur/system/takeover ]; then
+        return 0
+    fi
+
+    touch bhojpur/system/factory-reset
+
+    if [ -L sbin ]; then
+      rm -f sbin
+    fi
+
+    for i in *; do
+        case $i in
+            boot|bos|sbin)
+                ;;
+            *)
+                rm -rf $i
+        esac
+    done
+    for i in sbin/*; do
+        case $i in
+            sbin/init|sbin/dcp|sbin/opsutl)
+                ;;
+            *)
+                rm -rf "$i"
+        esac
+    done
+
+    rm -rf boot/[^g]*
+    rm -f bhojpur/system/takeover
+    rm -rf bhojpur/data
+    sync
+    
+    if [ -e bhojpur/system/poweroff ]; then
+        rm -f bhojpur/system/poweroff
+        sync
+        poweroff -f
+    else
+        reboot -f
+    fi
+}
+
+setup_mounts
+setup_bos
+setup_kernel_squashfs
+setup_init
+setup_dcp
+
+cd $TARGET
+
+takeover || true
+
+if [ -e bhojpur/system/factory-reset ] || [ -e bhojpur/system/ephemeral ]; then
+    rm -rf bhojpur/data bhojpur/system/factory-reset
+fi
+
+losetup -d /dev/loop0 || true
+mount --make-rprivate /
+mkdir -p .root
+pivot_root . .root
+BOS_MODE=local exec /sbin/init

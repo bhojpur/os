@@ -1,4 +1,4 @@
-MIT License
+package convert
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -19,3 +19,28 @@ MIT License
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+import (
+	"testing"
+)
+
+type data struct {
+	TTLMillis int `json:"ttl"`
+}
+
+func TestJSON(t *testing.T) {
+	d := &data{
+		TTLMillis: 57600000,
+	}
+
+	m, err := EncodeToMap(d)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	i, _ := ToNumber(m["ttl"])
+	if i != 57600000 {
+		t.Fatal("not", 57600000, "got", m["ttl"])
+	}
+
+}
