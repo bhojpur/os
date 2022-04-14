@@ -233,7 +233,7 @@ A full example of the Bhojpur OS configuration file is as below.
 ```yaml
 ssh_authorized_keys:
 - ssh-rsa AAAAB3NzaC1yc2EAAAADAQAB...
-- github:ibuildthecloud
+- github:bhojpur
 write_files:
 - encoding: ""
   content: |-
@@ -433,7 +433,7 @@ Example
 ```yaml
 ssh_authorized_keys:
 - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC2TBZGjE+J8ag11dzkFT58J3XPONrDVmalCNrKxsfADfyy0eqdZrG8hcAxAR/5zuj90Gin2uBR4Sw6Cn4VHsPZcFpXyQCjK1QDADj+WcuhpXOIOY3AB0LZBly9NI0ll+8lo3QtEaoyRLtrMBhQ6Mooy2M3MTG4JNwU9o3yInuqZWf9PvtW6KxMl+ygg1xZkljhemGZ9k0wSrjqif+8usNbzVlCOVQmZwZA+BZxbdcLNwkg7zWJSXzDIXyqM6iWPGXQDEbWLq3+HR1qKucTCSxjbqoe0FD5xcW7NHIME5XKX84yH92n6yn+rxSsyUfhJWYqJd+i0fKf5UbN6qLrtd/D"
-- "github:ibuildthecloud"
+- "github:bhojpur"
 ```
 
 ### `write_files`

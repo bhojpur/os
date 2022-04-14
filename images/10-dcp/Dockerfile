@@ -4,7 +4,7 @@ FROM ${REPO}/bos-base:${TAG}
 
 ARG ARCH
 ENV ARCH ${ARCH}
-ENV VERSION v1.22.2+dcp2
+ENV VERSION v0.0.3
 ADD https://raw.githubusercontent.com/bhojpur/dcp/${VERSION}/install.sh /output/install.sh
 ENV INSTALL_DCP_VERSION=${VERSION} \
     INSTALL_DCP_SKIP_START=true \
