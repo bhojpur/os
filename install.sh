@@ -53,11 +53,11 @@ usage()
 {
     echo "Usage: $PROG [--force-efi] [--debug] [--tty TTY] [--poweroff] [--takeover] [--no-format] [--config https://.../config.yaml] DEVICE ISO_URL"
     echo ""
-    echo "Example: $PROG /dev/vda https://github.com/bhojpur/os/releases/download/v0.0.1/bos.iso"
+    echo "Example: $PROG /dev/vda https://github.com/bhojpur/os/releases/download/v0.0.2/bos.iso"
     echo ""
     echo "DEVICE must be the disk that will be partitioned (/dev/vda). If you are using --no-format it should be the device of the BOS_STATE partition (/dev/vda2)"
     echo ""
-    echo "The parameters names refer to the same names used in the cmdline, refer to README.md for"
+    echo "The parameters names refer to the same names used in the command line, refer to README.md for"
     echo "more info."
     echo ""
     exit 1

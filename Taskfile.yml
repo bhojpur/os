@@ -76,9 +76,9 @@ tasks:
         - GOFLAGS=-mod=mod go run native/main.go
 
     generate:
-        desc: Generate Go source code from Protocol Buffers
+        desc: Generate Go source code
         cmds:
-        - protoc --go_out=./pkg/container --go-grpc_out=./pkg/container --go_opt=module=github.com/bhojpur/os/pkg/container --go-grpc_opt=require_unimplemented_servers=false,module=github.com/bhojpur/os/pkg/container pkg/container/types/drivers.proto
+        - GOFLAGS=-mod=mod go generate ./...
 
     test:
         desc: Execute all the Unit Tests

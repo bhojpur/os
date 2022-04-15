@@ -2,14 +2,12 @@ module github.com/bhojpur/os
 
 go 1.17
 
-replace github.com/knative/pkg => github.com/rancher/pkg v0.0.0-20190514055449-b30ab9de040e
-replace github.com/docker/docker => github.com/moby/moby v1.4.2-0.20170731201646-1009e6a40b29
-
 require (
-	github.com/bhojpur/host v0.0.6
+	github.com/bhojpur/host v0.0.7
 	github.com/docker/docker v20.10.14+incompatible
 	github.com/docker/go-units v0.4.0
 	github.com/ghodss/yaml v1.0.0
+	github.com/mattn/go-colorable v0.1.12
 	github.com/mattn/go-isatty v0.0.14
 	github.com/mattn/go-shellwords v1.0.12
 	github.com/otiai10/copy v1.0.2
@@ -27,14 +25,20 @@ require (
 require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/moby/sys/mount v0.3.2 // indirect
+	github.com/moby/sys/mountinfo v0.6.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	golang.org/x/term v0.0.0-20220411215600-e5f449aeb171 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 	k8s.io/utils v0.0.0-20220210201930-3a6ce19ff2f9 // indirect
-	pault.ag/go/modprobe v0.1.2 // indirect
 	pault.ag/go/topsort v0.1.1 // indirect
+)
+
+replace (
+	github.com/docker/docker => github.com/docker/docker v20.10.14+incompatible // oras dep requires a replace is set
+	knative.dev/pkg => github.com/bhojpur/knative-pkg v0.0.3
 )
 
 replace (
