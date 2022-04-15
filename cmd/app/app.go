@@ -57,7 +57,7 @@ Commands:
 Run '{{.Name}} COMMAND --help' for more information on a command.
 `
 
-var commandHelpTemplate = `Usage: hostops {{.Name}}{{if .Flags}} [OPTIONS]{{end}} [arg...]
+var commandHelpTemplate = `Usage: opsutl {{.Name}}{{if .Flags}} [OPTIONS]{{end}} [arg...]
 {{.Usage}}{{if .Description}}
 Description:
    {{.Description}}{{end}}{{if .Flags}}
