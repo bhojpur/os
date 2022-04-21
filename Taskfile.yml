@@ -13,6 +13,8 @@ tasks:
         desc: Build the operating system using Go
         cmds:
         - GOFLAGS=-mod=mod GOOS=linux go build -ldflags "-X google.golang.org/protobuf/reflect/protoregistry.conflictPolicy=warn" -o bin/opsutl main.go 
+        - chmod 755 bin/opsutl
+        - cp bin/opsutl $GOPATH/bin
 
     build-darwin:
         desc: Build the desktop application for current OS

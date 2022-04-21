@@ -3,14 +3,14 @@ module github.com/bhojpur/os
 go 1.17
 
 require (
-	github.com/bhojpur/host v0.0.7
+	github.com/bhojpur/host v0.0.8
 	github.com/docker/docker v20.10.14+incompatible
 	github.com/docker/go-units v0.4.0
 	github.com/ghodss/yaml v1.0.0
 	github.com/mattn/go-colorable v0.1.12
 	github.com/mattn/go-isatty v0.0.14
 	github.com/mattn/go-shellwords v1.0.12
-	github.com/otiai10/copy v1.0.2
+	github.com/otiai10/copy v1.7.0
 	github.com/paultag/go-modprobe v0.0.0-20180523225901-7ccf6a1b5271
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.8.1
@@ -19,7 +19,7 @@ require (
 	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4
 	golang.org/x/sys v0.0.0-20220412211240-33da011f77ad
 	gopkg.in/freddierice/go-losetup.v1 v1.0.0-20170407175016-fc9adea44124
-	k8s.io/apimachinery v0.23.5
+	k8s.io/apimachinery v0.23.6
 )
 
 require (
