@@ -3,7 +3,7 @@ module github.com/bhojpur/os
 go 1.17
 
 require (
-	github.com/bhojpur/host v0.0.8
+	github.com/bhojpur/host v0.0.9
 	github.com/docker/docker v20.10.14+incompatible
 	github.com/docker/go-units v0.4.0
 	github.com/ghodss/yaml v1.0.0
